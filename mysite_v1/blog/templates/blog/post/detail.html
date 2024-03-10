@@ -1,0 +1,19 @@
+{# Inherit the structure from the "blog/base.html" template. This allows reuse of the overall layout and styles. #}
+{% extends "blog/base.html" %}
+
+{# Set the title of the web page to the title of the post. The content of this block replaces the corresponding block in the base template. #}
+{% block title %}{{ post.title }}{% endblock %}
+
+{# Define the main content of the page, which will be inserted into the base template's content block. #}
+{% block content %}
+  {# Display the post's title as a main heading. #}
+  <h1>{{ post.title }}</h1>
+
+  {# Display the publication date and author of the post in a paragraph with a "date" class for styling. #}
+  <p class="date">
+    Published {{ post.publish }} by {{ post.author }}
+  </p>
+
+  {# Display the body of the post. The "linebreaks" filter converts line breaks in the text to appropriate HTML <br> tags for web display. #}
+  {{ post.body|linebreaks }}
+{% endblock %}
