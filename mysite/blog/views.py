@@ -2,14 +2,31 @@
 from django.http import Http404
 from django.shortcuts import render, get_object_or_404
 from .models import Post
+from django.core.paginator import Paginator
+from django.views.generic import ListView
 
-# Define the view for displaying a list of posts.
-def post_list(request):
-    # Retrieve all published posts using the custom 'published' manager defined in the Post model.
-    posts = Post.published.all()
-    # Render the list of posts using the 'post/list.html' template.
-    # Pass the list of posts to the template context for rendering.
-    return render(request, 'blog/post/list.html', {'posts': posts})
+
+# This class defines an alternative list view for blog posts using Django's generic ListView.
+# ListView is a powerful generic view provided by Django for displaying a list of objects.
+class PostListView(ListView):
+    """
+    Alternative post list view.
+    """
+    # Specifies the queryset that will be used to retrieve objects.
+    # Here, it uses the custom 'published' manager to fetch all published posts.
+    queryset = Post.published.all()
+
+    # Sets the name of the context variable to be used in the template to access the list of posts.
+    # By default, ListView uses 'object_list', but specifying 'posts' makes the template code clearer.
+    context_object_name = 'posts'
+
+    # Enables pagination for the view, specifying the number of posts to display per page.
+    paginate_by = 3
+
+    # Defines the path to the template used to render the list view.
+    # By default, ListView uses the <app_name>/<model_name>_list.html template.
+    template_name = 'blog/post/list.html'
+    
 
 # Defines the view function for displaying the detail of a single post.
 # The function takes 'year', 'month', 'day', and 'post' (slug) as parameters from the URL.

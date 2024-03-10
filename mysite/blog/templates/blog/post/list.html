@@ -26,4 +26,5 @@
     {# Displays the first 30 words of the post's body and converts line breaks in the text into <br> tags. #}
     {{ post.body|truncatewords:30|linebreaks }}
   {% endfor %}
+  {% include "pagination.html" with page=page_obj %}
 {% endblock %}

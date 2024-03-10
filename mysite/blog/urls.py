@@ -11,7 +11,9 @@ urlpatterns = [
     # The empty string ('') matches the root URL within the blog app's namespace.
     # 'views.post_list' specifies the view function to handle requests for this URL pattern.
     # 'name='post_list'' names this URL pattern 'post_list' for easy referencing in templates and view functions.
-    path('', views.post_list, name='post_list'),
+    #path('', views.post_list, name='post_list'),
+
+    path('', views.PostListView.as_view(), name='post_list'),
 
     # Defines a URL pattern for the post_detail view that includes year, month, day, and a slug in the URL.
     # The pattern captures four keyword arguments: 'year', 'month', 'day', and 'post' (the slug of the post),
