@@ -16,35 +16,51 @@
 
   {# Display the body of the post. The "linebreaks" filter converts line breaks in the text to appropriate HTML <br> tags for web display. #}
   {{ post.body|linebreaks }}
-  <!-- Link to share the current post. When clicked, it leads to the post_share view for the post. -->
+  {# Link to share the current post. When clicked, it leads to the post_share view for the post. #}
   <p>
     <a href="{% url "blog:post_share" post.id %}">
       Share this post
     </a>
   </p>
-<!-- Use the 'with' tag to temporarily assign the total number of comments to 'total_comments'. -->
+
+{# Displays a heading for the similar posts section. #}
+<h2>Similar posts</h2>
+{# Begins iterating over the 'similar_posts' queryset. If there are similar posts, each will be processed in turn. #}
+{% for post in similar_posts %}
+  {# For each similar post, creates a paragraph containing a hyperlink. #}
+  {# The hyperlink uses the post's absolute URL as the href attribute and displays the post's title as the link text. #}
+  <p>
+    <a href="{{ post.get_absolute_url }}">{{ post.title }}</a>
+  </p>
+{% empty %}
+  {# This block is executed if the 'similar_posts' queryset is empty, displaying a message indicating no similar posts are available. #}
+  There are no similar posts yet.
+{% endfor %}
+
+
+{# Use the 'with' tag to temporarily assign the total number of comments to 'total_comments'. #}
 {% with comments.count as total_comments %}
-  <!-- Display the total number of comments. 'pluralize' filter is used to handle singular/plural forms correctly. -->
+  {# Display the total number of comments. 'pluralize' filter is used to handle singular/plural forms correctly. #}
   <h2>
     {{ total_comments }} comment{{ total_comments|pluralize }}
   </h2>
 {% endwith %}
-<!-- Iterate over each comment in the 'comments' queryset. -->
+{# Iterate over each comment in the 'comments' queryset. #}
 {% for comment in comments %}
-  <!-- Each comment is wrapped in a 'div' with a class for styling. -->
+  {# Each comment is wrapped in a 'div' with a class for styling. #}
   <div class="comment">
-    <!-- Display comment metadata such as the commenter's name and the creation date. -->
+    {# Display comment metadata such as the commenter's name and the creation date. #}
     <p class="info">
       Comment {{ forloop.counter }} by {{ comment.name }} {{ comment.created }}
     </p>
-    <!-- The comment body is displayed with line breaks converted to <br> tags. -->
+    {# The comment body is displayed with line breaks converted to <br> tags. #}
     {{ comment.body|linebreaks }}
   </div>
 {% empty %}
-  <!-- This block is executed if there are no comments, displaying a message. -->
+  {# This block is executed if there are no comments, displaying a message. #}
   <p>There are no comments.</p>
 {% endfor %}
-<!-- Include the comment form template to allow adding new comments. -->
+{# Include the comment form template to allow adding new comments. #}
 {% include "blog/post/includes/comment_form.html" %}
 
 {% endblock %}
