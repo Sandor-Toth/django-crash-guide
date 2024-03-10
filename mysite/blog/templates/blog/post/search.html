@@ -1,0 +1,42 @@
+<!-- Inherits the base layout template for consistent site styling. -->
+{% extends "blog/base.html" %}
+<!-- Loads custom template tags defined in 'blog_tags'. -->
+{% load blog_tags %}
+<!-- Sets the title of the page to "Search". -->
+{% block title %}Search{% endblock %}
+<!-- Main content block where the search functionality and results are displayed. -->
+{% block content %}
+  <!-- Checks if there is a search query. -->
+  {% if query %}
+    <!-- Displays a header with the search query. -->
+    <h1>Posts containing "{{ query }}"</h1>
+    <!-- Counts and displays the number of search results, handling pluralization. -->
+    <h3>
+      {% with results.count as total_results %}
+        Found {{ total_results }} result{{ total_results|pluralize }}
+      {% endwith %}
+    </h3>
+    <!-- Iterates over the search results and displays each post's title as a link. -->
+    {% for post in results %}
+      <h4>
+        <a href="{{ post.get_absolute_url }}">
+          {{ post.title }}
+        </a>
+      </h4>
+      <!-- Displays a truncated version of the post's body with markdown rendered to HTML. -->
+      {{ post.body|markdown|truncatewords_html:12 }}
+    {% empty %}
+      <!-- Message displayed if no results are found for the query. -->
+      <p>There are no results for your query.</p>
+    {% endfor %}
+    <!-- Link to perform another search. -->
+    <p><a href="{% url "blog:post_search" %}">Search again</a></p>
+  {% else %}
+    <!-- Displays a form allowing the user to search for posts. -->
+    <h1>Search for posts</h1>
+    <form method="get">
+      {{ form.as_p }}
+      <input type="submit" value="Search">
+    </form>
+  {% endif %}
+{% endblock %}

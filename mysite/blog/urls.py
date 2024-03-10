@@ -35,4 +35,7 @@ urlpatterns = [
     # This allows the URL to be descriptive, indicating that it filters posts by a given tag.
     path('tag/<slug:tag_slug>/', views.post_list, name='post_list_by_tag'),
 
+    # URL pattern that routes requests to the 'post_search' view for post searching.
+    path('search/', views.post_search, name='post_search'),
+
 ]

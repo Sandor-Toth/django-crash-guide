@@ -21,3 +21,8 @@ class CommentForm(forms.ModelForm):
         # Defines the fields that will be included in the form.
         # This allows users to enter their name, email, and the body of their comment.
         fields = ['name', 'email', 'body']
+
+
+# Defines a simple form for submitting a search query.
+class SearchForm(forms.Form):
+    query = forms.CharField()

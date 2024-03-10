@@ -4,11 +4,13 @@ from django.shortcuts import render, get_object_or_404
 from .models import Post, Comment
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.views.generic import ListView
-from .forms import EmailPostForm, CommentForm
+from .forms import EmailPostForm, CommentForm, SearchForm
 from django.core.mail import send_mail
 from django.views.decorators.http import require_POST
 from taggit.models import Tag
 from django.db.models import Count
+from django.contrib.postgres.search import SearchVector, SearchQuery, SearchRank
+from django.contrib.postgres.search import TrigramSimilarity
 
 
 # This class defines an alternative list view for blog posts using Django's generic ListView.
@@ -130,3 +132,24 @@ def post_comment(request, post_id):
     return render(request, 'blog/post/comment.html', {'post': post, 'form': form, 'comment': comment})
 
 
+# Defines the view function for handling post search functionality.
+def post_search(request):
+    # Initializes the search form.
+    form = SearchForm()
+    query = None  # Will store the search query if one exists.
+    results = []  # Initializes an empty list for search results.
+
+    # Checks if 'query' is a GET parameter in the request.
+    if 'query' in request.GET:
+        # Populates the form with data from the request.
+        form = SearchForm(request.GET)
+        if form.is_valid():
+            # Extracts the cleaned search query from the form.
+            query = form.cleaned_data['query']
+            # Performs the search using TrigramSimilarity to find similar titles.
+            results = Post.published.annotate(
+                similarity=TrigramSimilarity('title', query),
+            ).filter(similarity__gt=0.1).order_by('-similarity')
+    
+    # Renders the search page template with the form, query, and results context.
+    return render(request, 'blog/post/search.html', {'form': form, 'query': query, 'results': results})
