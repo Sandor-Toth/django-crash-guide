@@ -4,6 +4,8 @@ from django.shortcuts import render, get_object_or_404
 from .models import Post
 from django.core.paginator import Paginator
 from django.views.generic import ListView
+from .forms import EmailPostForm
+from django.core.mail import send_mail
 
 
 # This class defines an alternative list view for blog posts using Django's generic ListView.
@@ -26,7 +28,7 @@ class PostListView(ListView):
     # Defines the path to the template used to render the list view.
     # By default, ListView uses the <app_name>/<model_name>_list.html template.
     template_name = 'blog/post/list.html'
-    
+
 
 # Defines the view function for displaying the detail of a single post.
 # The function takes 'year', 'month', 'day', and 'post' (slug) as parameters from the URL.
@@ -45,3 +47,30 @@ def post_detail(request, year, month, day, post):
                              publish__month=month,
                              publish__day=day)
     return render(request, 'blog/post/detail.html', {'post': post})
+
+
+def post_share(request, post_id):
+    # Retrieve the post by ID only if it's published; otherwise, raise a 404 error.
+    post = get_object_or_404(Post, id=post_id, status=Post.Status.PUBLISHED)
+    sent = False  # Flag to indicate if the email has been sent.
+    if request.method == 'POST':
+        # The form was submitted.
+        form = EmailPostForm(request.POST)
+        if form.is_valid():
+            # All form fields passed validation.
+            cd = form.cleaned_data
+            # Build the absolute URL of the post.
+            post_url = request.build_absolute_uri(post.get_absolute_url())
+            # Create the email subject and message.
+            subject = f"{cd['name']} recommends you read {post.title}"
+            message = f"Read {post.title} at {post_url}\n\n" \
+                      f"{cd['name']}'s comments: {cd['comments']}"
+            # Send the email.
+            send_mail(subject, message, 'your_account@gmail.com', [cd['to']])
+            sent = True  # Update the flag.
+    else:
+        # Initialize an empty form instance to display the form in GET request.
+        form = EmailPostForm()
+    # Render the share template with the context variables: post, form, and sent flag.
+    return render(request, 'blog/post/share.html', {'post': post, 'form': form, 'sent': sent})
+

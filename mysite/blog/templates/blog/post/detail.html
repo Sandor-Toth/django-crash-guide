@@ -16,4 +16,10 @@
 
   {# Display the body of the post. The "linebreaks" filter converts line breaks in the text to appropriate HTML <br> tags for web display. #}
   {{ post.body|linebreaks }}
+  <!-- Link to share the current post. When clicked, it leads to the post_share view for the post. -->
+  <p>
+    <a href="{% url "blog:post_share" post.id %}">
+      Share this post
+    </a>
+  </p>
 {% endblock %}

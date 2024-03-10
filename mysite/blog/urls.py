@@ -22,4 +22,9 @@ urlpatterns = [
     # making the URL descriptive and SEO-friendly.
     path('<int:year>/<int:month>/<int:day>/<slug:post>/', views.post_detail, name='post_detail'),
 
+    # URL pattern for the "share" functionality of a post.
+    # It captures the post's ID from the URL and passes it to the post_share view.
+    path('<int:post_id>/share/', views.post_share, name='post_share'),
+
+
 ]

@@ -1,0 +1,29 @@
+{# Inherits the base layout from "blog/base.html" to maintain site-wide consistency. #}
+{% extends "blog/base.html" %}
+
+{# Sets the title of the page to "Share a post" within the base template's title block. #}
+{% block title %}Share a post{% endblock %}
+
+{# Begins the content block where the main content of the page is inserted. #}
+{% block content %}
+  {# Checks if the email has been sent by evaluating the 'sent' variable. #}
+  {% if sent %}
+    {# If the email has been sent, displays a confirmation message. #}
+    <h1>E-mail successfully sent</h1>
+    <p>
+      {# Shows the title of the post that was shared and the recipient's email address. #}
+      "{{ post.title }}" was successfully sent to {{ form.cleaned_data.to }}.
+    </p>
+  {% else %}
+    {# If the email has not been sent, displays a form to share the post. #}
+    <h1>Share "{{ post.title }}" by e-mail</h1>
+    <form method="post">
+      {# Renders the form fields as paragraph elements. #}
+      {{ form.as_p }}
+      {# Includes a CSRF token for security purposes. #}
+      {% csrf_token %}
+      {# Adds a submit button to the form. #}
+      <input type="submit" value="Send e-mail">
+    </form>
+  {% endif %}
+{% endblock %}
