@@ -2,6 +2,7 @@ from django.db import models
 from django.utils import timezone
 from django.contrib.auth.models import User
 from django.urls import reverse
+from taggit.managers import TaggableManager
 
 # Custom manager for querying published posts.
 class PublishedManager(models.Manager):
@@ -33,6 +34,8 @@ class Post(models.Model):
     status = models.CharField(max_length=2,  # Post status, uses the Status choices
                               choices=Status.choices,
                               default=Status.DRAFT)
+    # The tags manager will allow you to add, retrieve, and remove tags from Post objects.
+    tags = TaggableManager()
 
     # Model managers
     objects = models.Manager()  # The default manager.

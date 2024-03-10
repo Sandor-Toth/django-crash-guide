@@ -2,11 +2,12 @@
 from django.http import Http404
 from django.shortcuts import render, get_object_or_404
 from .models import Post, Comment
-from django.core.paginator import Paginator
+from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.views.generic import ListView
 from .forms import EmailPostForm, CommentForm
 from django.core.mail import send_mail
 from django.views.decorators.http import require_POST
+from taggit.models import Tag
 
 
 # This class defines an alternative list view for blog posts using Django's generic ListView.
@@ -29,6 +30,35 @@ class PostListView(ListView):
     # Defines the path to the template used to render the list view.
     # By default, ListView uses the <app_name>/<model_name>_list.html template.
     template_name = 'blog/post/list.html'
+
+
+def post_list(request, tag_slug=None):
+    # Start by getting all published posts.
+    post_list = Post.published.all()
+    tag = None  # Initialize the tag variable to None.
+    
+    # If a tag slug is provided, try to fetch the corresponding tag object.
+    # If the tag doesn't exist, raise a 404 error.
+    if tag_slug:
+        tag = get_object_or_404(Tag, slug=tag_slug)
+        # Filter the initial post list to include only posts associated with the given tag.
+        post_list = post_list.filter(tags__in=[tag])
+    
+    # Set up pagination, specifying 3 posts per page.
+    paginator = Paginator(post_list, 3)  # Paginator object.
+    page_number = request.GET.get('page', 1)  # Get the page number from the query parameters.
+
+    try:
+        posts = paginator.page(page_number)  # Attempt to fetch the requested page.
+    except PageNotAnInteger:
+        # If the page number is not an integer, deliver the first page.
+        posts = paginator.page(1)
+    except EmptyPage:
+        # If the page number is out of range (too high), deliver the last page of results.
+        posts = paginator.page(paginator.num_pages)
+    
+    # Render the list template with the paginated posts and the tag, if applicable.
+    return render(request, 'blog/post/list.html', {'posts': posts, 'tag': tag})
 
 
 def post_detail(request, year, month, day, post):
