@@ -1,0 +1,23 @@
+{# Load the static tag library to use the {% static %} template tag. #}
+{% load static %}
+<!DOCTYPE html>
+<html>
+<head>
+  {# Define the title block. Pages that extend this template can override the title content. #}
+  <title>{% block title %}{% endblock %}</title>
+  {# Link to the static CSS file using the {% static %} template tag to construct the URL to static files. #}
+  <link href="{% static "css/blog.css" %}" rel="stylesheet">
+</head>
+<body>
+  {# Define the main content area. Pages that extend this template can insert their content here. #}
+  <div id="content">
+    {% block content %}
+    {% endblock %}
+  </div>
+  {# Static sidebar content that will appear on all pages using this template. #}
+  <div id="sidebar">
+    <h2>My blog</h2>
+    <p>This is my blog.</p>
+  </div>
+</body>
+</html>
