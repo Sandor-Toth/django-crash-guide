@@ -1,6 +1,9 @@
 {# Inherit the structure from the "blog/base.html" template. This allows reuse of the overall layout and styles. #}
 {% extends "blog/base.html" %}
 
+{# Loads the custom template tags defined in 'blog_tags'. This makes the tags and filters available for use in the template. #}
+{% load blog_tags %}
+
 {# Set the title of the web page to the title of the post. The content of this block replaces the corresponding block in the base template. #}
 {% block title %}{{ post.title }}{% endblock %}
 
@@ -15,7 +18,7 @@
   </p>
 
   {# Display the body of the post. The "linebreaks" filter converts line breaks in the text to appropriate HTML <br> tags for web display. #}
-  {{ post.body|linebreaks }}
+  {{ post.body|markdown }}
   {# Link to share the current post. When clicked, it leads to the post_share view for the post. #}
   <p>
     <a href="{% url "blog:post_share" post.id %}">
@@ -54,7 +57,7 @@
       Comment {{ forloop.counter }} by {{ comment.name }} {{ comment.created }}
     </p>
     {# The comment body is displayed with line breaks converted to <br> tags. #}
-    {{ comment.body|linebreaks }}
+    {{ comment.body|markdown }}
   </div>
 {% empty %}
   {# This block is executed if there are no comments, displaying a message. #}

@@ -1,6 +1,9 @@
 {# Extends the base template 'blog/base.html', inheriting its structure and block definitions. #}
 {% extends "blog/base.html" %}
 
+{# Loads the custom template tags defined in 'blog_tags'. This makes the tags and filters available for use in the template. #}
+{% load blog_tags %}
+
 {# Overrides the 'title' block of the base template. #}
 {% block title %}My Blog{% endblock %}
 
@@ -37,7 +40,7 @@
       Published {{ post.publish }} by {{ post.author }}
     </p>
     {# Displays the first 30 words of the post's body and converts line breaks in the text into <br> tags. #}
-    {{ post.body|truncatewords:30|linebreaks }}
+    {{ post.body|markdown|truncatewords_html:30 }}
   {% endfor %}
   {% include "pagination.html" with page=posts %}
 {% endblock %}
