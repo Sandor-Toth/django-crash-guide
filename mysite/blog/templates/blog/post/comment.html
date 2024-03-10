@@ -1,0 +1,17 @@
+<!-- Extends the base layout template to ensure consistency across the site. -->
+{% extends "blog/base.html" %}
+<!-- Sets the title block content to "Add a comment" -->
+{% block title %}Add a comment{% endblock %}
+<!-- Main content block -->
+{% block content %}
+  <!-- Checks if a comment object exists, indicating a comment has been successfully added. -->
+  {% if comment %}
+    <!-- Displays a confirmation message -->
+    <h2>Your comment has been added.</h2>
+    <!-- Provides a link back to the original post -->
+    <p><a href="{{ post.get_absolute_url }}">Back to the post</a></p>
+  {% else %}
+    <!-- Includes the comment form HTML snippet if no comment object exists, allowing users to add a comment. -->
+    {% include "blog/post/includes/comment_form.html" %}
+  {% endif %}
+{% endblock %}

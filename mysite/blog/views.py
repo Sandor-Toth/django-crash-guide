@@ -1,11 +1,12 @@
 # Import necessary Django modules and the Post model from the current app's models.
 from django.http import Http404
 from django.shortcuts import render, get_object_or_404
-from .models import Post
+from .models import Post, Comment
 from django.core.paginator import Paginator
 from django.views.generic import ListView
-from .forms import EmailPostForm
+from .forms import EmailPostForm, CommentForm
 from django.core.mail import send_mail
+from django.views.decorators.http import require_POST
 
 
 # This class defines an alternative list view for blog posts using Django's generic ListView.
@@ -30,23 +31,16 @@ class PostListView(ListView):
     template_name = 'blog/post/list.html'
 
 
-# Defines the view function for displaying the detail of a single post.
-# The function takes 'year', 'month', 'day', and 'post' (slug) as parameters from the URL.
-# These parameters are used to find a specific post that matches all the given criteria:
-# 1. The post must have a status of 'PUBLISHED'.
-# 2. The post's slug must match the 'post' parameter.
-# 3. The post's publication date must match the 'year', 'month', and 'day' parameters.
-# If no post matches these criteria, a 404 page is displayed.
-# If a post is found, it renders the 'blog/post/detail.html' template,
-# passing the post object to the template context for display.
 def post_detail(request, year, month, day, post):
-    post = get_object_or_404(Post,
-                             status=Post.Status.PUBLISHED,
-                             slug=post,
-                             publish__year=year,
-                             publish__month=month,
-                             publish__day=day)
-    return render(request, 'blog/post/detail.html', {'post': post})
+    # Fetch the post based on URL parameters and ensure it is published.
+    post = get_object_or_404(Post, status=Post.Status.PUBLISHED, slug=post,
+                             publish__year=year, publish__month=month, publish__day=day)
+    # Retrieve active comments for the post.
+    comments = post.comments.filter(active=True)
+    # Instantiate the form for adding comments.
+    form = CommentForm()
+    # Render the post detail template with the post, comments, and form included in the context.
+    return render(request, 'blog/post/detail.html', {'post': post, 'comments': comments, 'form': form})
 
 
 def post_share(request, post_id):
@@ -73,4 +67,24 @@ def post_share(request, post_id):
         form = EmailPostForm()
     # Render the share template with the context variables: post, form, and sent flag.
     return render(request, 'blog/post/share.html', {'post': post, 'form': form, 'sent': sent})
+
+
+@require_POST  # This decorator ensures the view only handles POST requests.
+def post_comment(request, post_id):
+    # Retrieve the post by ID and ensure it is published.
+    post = get_object_or_404(Post, id=post_id, status=Post.Status.PUBLISHED)
+    comment = None  # Initialize the comment variable.
+    # Instantiate the form with POST data.
+    form = CommentForm(data=request.POST)
+    if form.is_valid():
+        # Create a Comment object but don't save to the database yet.
+        comment = form.save(commit=False)
+        # Assign the current post to the comment.
+        comment.post = post
+        # Now save the comment to the database.
+        comment.save()
+    # Render a template specifically for handling the comment submission.
+    # Pass the post, form, and potentially the newly created comment to the context.
+    return render(request, 'blog/post/comment.html', {'post': post, 'form': form, 'comment': comment})
+
 

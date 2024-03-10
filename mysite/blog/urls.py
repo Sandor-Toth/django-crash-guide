@@ -26,5 +26,7 @@ urlpatterns = [
     # It captures the post's ID from the URL and passes it to the post_share view.
     path('<int:post_id>/share/', views.post_share, name='post_share'),
 
-
+    # URL pattern for adding a comment to a post. 
+    # The pattern captures the post's ID and routes the request to the post_comment view.
+    path('<int:post_id>/comment/', views.post_comment, name='post_comment'),
 ]

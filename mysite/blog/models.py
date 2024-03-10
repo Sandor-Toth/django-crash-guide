@@ -62,5 +62,29 @@ class Post(models.Model):
                             self.publish.month,
                             self.publish.day,
                             self.slug])
+    
 
-
+# Defines the Comment model, representing comments made on blog posts.
+class Comment(models.Model):
+    # ForeignKey relation to the Post model. A post can have many comments.
+    post = models.ForeignKey(Post, on_delete=models.CASCADE, related_name='comments')
+    # Fields for the commenter's name, email, and the comment body.
+    name = models.CharField(max_length=80)
+    email = models.EmailField()
+    body = models.TextField()
+    # Automatically set the comment creation and update timestamps.
+    created = models.DateTimeField(auto_now_add=True)
+    updated = models.DateTimeField(auto_now=True)
+    # A Boolean field indicating if the comment is active (visible on the blog).
+    active = models.BooleanField(default=True)
+    
+    # Meta class to specify ordering of comments by creation date and to index the created field for performance.
+    class Meta:
+        ordering = ['created']
+        indexes = [
+            models.Index(fields=['created']),
+        ]
+    
+    # String representation of the Comment object, showing the commenter's name and the associated post.
+    def __str__(self):
+        return f'Comment by {self.name} on {self.post}'

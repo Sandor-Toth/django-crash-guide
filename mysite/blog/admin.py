@@ -1,6 +1,6 @@
 # Import the admin module from Django's admin interface and the Post model from the current app's models.
 from django.contrib import admin
-from .models import Post
+from .models import Post, Comment
 
 # This decorator registers the Post model with the admin site,
 # and the class below customizes the admin interface for the Post model.
@@ -31,3 +31,14 @@ class PostAdmin(admin.ModelAdmin):
     # ordering sets the default ordering for the change list in the admin. This is applied when no other
     # order is specified.
     ordering = ['status', 'publish']
+
+
+# Registers the Comment model with the Django admin, customizing the admin interface.
+@admin.register(Comment)
+class CommentAdmin(admin.ModelAdmin):
+    # Customizes the display list in the admin interface to include relevant fields.
+    list_display = ['name', 'email', 'post', 'created', 'active']
+    # Adds filters to the sidebar for easier navigation through comments.
+    list_filter = ['active', 'created', 'updated']
+    # Enables search functionality for comment properties.
+    search_fields = ['name', 'email', 'body']
