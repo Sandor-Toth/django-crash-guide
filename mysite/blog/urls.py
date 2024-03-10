@@ -13,10 +13,11 @@ urlpatterns = [
     # 'name='post_list'' names this URL pattern 'post_list' for easy referencing in templates and view functions.
     path('', views.post_list, name='post_list'),
 
-    # URL pattern for the blog post detail view.
-    # '<int:id>/' captures a part of the URL as an integer parameter named 'id', which is passed to the view function.
-    # This pattern matches URLs like 'blog/1/', where '1' is the ID of the post to display.
-    # 'views.post_detail' specifies the view function to handle requests for this URL pattern.
-    # 'name='post_detail'' names this URL pattern 'post_detail' for easy referencing.
-    path('<int:id>/', views.post_detail, name='post_detail'),
+    # Defines a URL pattern for the post_detail view that includes year, month, day, and a slug in the URL.
+    # The pattern captures four keyword arguments: 'year', 'month', 'day', and 'post' (the slug of the post),
+    # which are passed to the post_detail view function.
+    # This allows for URLs that include the publication date of the post and its slug, 
+    # making the URL descriptive and SEO-friendly.
+    path('<int:year>/<int:month>/<int:day>/<slug:post>/', views.post_detail, name='post_detail'),
+
 ]

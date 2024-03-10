@@ -14,8 +14,9 @@
     {# Displays the title of the post as a link to its detail page. #}
     {# The {% url %} tag dynamically generates the URL to the post_detail view, passing the post's id. #}
     <h2>
-      <a href="{% url 'blog:post_detail' post.id %}">
-        {{ post.title }}
+      {#<a href="{% url 'blog:post_detail' post.id %}">#}
+      <a href="{{ post.get_absolute_url }}">
+      {{ post.title }}
       </a>
     </h2>
     {# Displays the publication date and author of the post. #}

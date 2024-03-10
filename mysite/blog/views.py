@@ -11,11 +11,20 @@ def post_list(request):
     # Pass the list of posts to the template context for rendering.
     return render(request, 'blog/post/list.html', {'posts': posts})
 
-# Define the view for displaying a detailed page for a single post.
-def post_detail(request, id):
-    # Retrieve a single post by ID where the status is 'PUBLISHED'.
-    # If no post matches the criteria, raise a 404 error.
-    post = get_object_or_404(Post, id=id, status=Post.Status.PUBLISHED)
-    # Render the detail page for the post using the 'post/detail.html' template.
-    # Pass the post to the template context for rendering.
+# Defines the view function for displaying the detail of a single post.
+# The function takes 'year', 'month', 'day', and 'post' (slug) as parameters from the URL.
+# These parameters are used to find a specific post that matches all the given criteria:
+# 1. The post must have a status of 'PUBLISHED'.
+# 2. The post's slug must match the 'post' parameter.
+# 3. The post's publication date must match the 'year', 'month', and 'day' parameters.
+# If no post matches these criteria, a 404 page is displayed.
+# If a post is found, it renders the 'blog/post/detail.html' template,
+# passing the post object to the template context for display.
+def post_detail(request, year, month, day, post):
+    post = get_object_or_404(Post,
+                             status=Post.Status.PUBLISHED,
+                             slug=post,
+                             publish__year=year,
+                             publish__month=month,
+                             publish__day=day)
     return render(request, 'blog/post/detail.html', {'post': post})
