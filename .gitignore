@@ -3,6 +3,6 @@ db.sqlite3
 __pycache__
 .pyc
 .env
-/media
+media/
 migrations/
 !migrations/__init__.py
