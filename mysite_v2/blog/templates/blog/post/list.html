@@ -1,0 +1,30 @@
+{# Extends the base template 'blog/base.html', inheriting its structure and block definitions. #}
+{% extends "blog/base.html" %}
+
+{# Overrides the 'title' block of the base template. #}
+{% block title %}My Blog{% endblock %}
+
+{# Overrides the 'content' block of the base template. #}
+{% block content %}
+  {# Displays a heading for the blog. #}
+  <h1>My Blog</h1>
+  
+  {# Starts a loop to iterate over each post in the 'posts' context variable. #}
+  {% for post in posts %}
+    {# Displays the title of the post as a link to its detail page. #}
+    {# The {% url %} tag dynamically generates the URL to the post_detail view, passing the post's id. #}
+    <h2>
+      {#<a href="{% url 'blog:post_detail' post.id %}">#}
+      <a href="{{ post.get_absolute_url }}">
+      {{ post.title }}
+      </a>
+    </h2>
+    {# Displays the publication date and author of the post. #}
+    <p class="date">
+      Published {{ post.publish }} by {{ post.author }}
+    </p>
+    {# Displays the first 30 words of the post's body and converts line breaks in the text into <br> tags. #}
+    {{ post.body|truncatewords:30|linebreaks }}
+  {% endfor %}
+  {% include "pagination.html" with page=page_obj %}
+{% endblock %}

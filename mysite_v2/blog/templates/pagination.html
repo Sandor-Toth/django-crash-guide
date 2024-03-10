@@ -1,0 +1,18 @@
+{# This div contains the pagination controls for navigating through pages of posts. #}
+<div class="pagination">
+    <span class="step-links">
+      {# Checks if there is a previous page. If so, it renders a link to the previous page. #}
+      {% if page.has_previous %}
+        <a href="?page={{ page.previous_page_number }}">Previous</a>
+      {% endif %}
+      {# Displays the current page number and the total number of pages. #}
+      <span class="current">
+        Page {{ page.number }} of {{ page.paginator.num_pages }}.
+      </span>
+      {# Checks if there is a next page. If so, it renders a link to the next page. #}
+      {% if page.has_next %}
+        <a href="?page={{ page.next_page_number }}">Next</a>
+      {% endif %}
+    </span>
+  </div>
+  

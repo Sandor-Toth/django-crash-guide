@@ -1,0 +1,11 @@
+<!-- Heading indicating the form's purpose -->
+<h2>Add a new comment</h2>
+<!-- Form for submitting a new comment. The action attribute points to the URL for posting a comment, dynamically generated using the post's ID. -->
+<form action="{% url "blog:post_comment" post.id %}" method="post">
+  <!-- Renders the form fields as paragraphs. Django's form handling generates the necessary HTML for each field. -->
+  {{ form.as_p }}
+  <!-- CSRF token for security, preventing Cross-Site Request Forgery attacks. -->
+  {% csrf_token %}
+  <!-- Submit button for the form. -->
+  <p><input type="submit" value="Add comment"></p>
+</form>
